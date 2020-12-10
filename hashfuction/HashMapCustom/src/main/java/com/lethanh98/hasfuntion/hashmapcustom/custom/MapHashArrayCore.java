@@ -1,7 +1,7 @@
 package com.lethanh98.hasfuntion.hashmapcustom.custom;
 
 
-import com.lethanh98.hasfuntion.hashmapcustom.model.HashObj;
+import com.lethanh98.hasfuntion.hashmapcustom.model.HashObjArrayCore;
 import lombok.Data;
 
 @Data
@@ -23,19 +23,19 @@ public class MapHashArrayCore<K, V> implements MapCustom<K, V> {
         if (obj[hash] == null) {
             return null;
         }
-        HashObj<K, V> kvHashObj = (HashObj<K, V>) obj[hash];
+        HashObjArrayCore<K, V> kvHashObjArrayCore = (HashObjArrayCore<K, V>) obj[hash];
 
-        if (kvHashObj.getKey().equals(key)) {
-            return kvHashObj.getValue();
+        if (kvHashObjArrayCore.getKey().equals(key)) {
+            return kvHashObjArrayCore.getValue();
         }
 
         while (true) {
-            if (kvHashObj.getNext() == null) {
+            if (kvHashObjArrayCore.getNext() == null) {
                 return null;
             }
-            kvHashObj = kvHashObj.getNext();
-            if (kvHashObj.getKey().equals(key)) {
-                return kvHashObj.getValue();
+            kvHashObjArrayCore = kvHashObjArrayCore.getNext();
+            if (kvHashObjArrayCore.getKey().equals(key)) {
+                return kvHashObjArrayCore.getValue();
             }
         }
     }
@@ -45,15 +45,16 @@ public class MapHashArrayCore<K, V> implements MapCustom<K, V> {
         if (hash < obj.length) {
             return hash;
         }
+        int number = 1;
         do {
-            hash = hash % 5;
-        } while (hash > obj.length);
+            hash = (hash % ++number);
+        } while (hash >= obj.length);
         return hash;
     }
 
     public void put(K key, V value) {
         int hash = getIndex(key);
-        HashObj<K, V> objHash = new HashObj<>();
+        HashObjArrayCore<K, V> objHash = new HashObjArrayCore<>();
         objHash.setHash(hash);
         objHash.setKey(key);
         objHash.setValue(value);
@@ -61,23 +62,23 @@ public class MapHashArrayCore<K, V> implements MapCustom<K, V> {
             obj[hash] = objHash;
             return;
         }
-        HashObj<K, V> kvHashObj = (HashObj<K, V>) obj[hash];
-        if (kvHashObj.getKey().equals(key)) {
-            kvHashObj.setValue(value);
+        HashObjArrayCore<K, V> kvHashObjArrayCore = (HashObjArrayCore<K, V>) obj[hash];
+        if (kvHashObjArrayCore.getKey().equals(key)) {
+            kvHashObjArrayCore.setValue(value);
             return;
         }
         while (true) {
-            if (kvHashObj.getNext() == null) {
-                kvHashObj.setNext(objHash);
+            if (kvHashObjArrayCore.getNext() == null) {
+                kvHashObjArrayCore.setNext(objHash);
                 break;
             }
-            kvHashObj = kvHashObj.getNext();
+            kvHashObjArrayCore = kvHashObjArrayCore.getNext();
 
-            if (kvHashObj.getKey().equals(key)) {
-                kvHashObj.setValue(value);
+            if (kvHashObjArrayCore.getKey().equals(key)) {
+                kvHashObjArrayCore.setValue(value);
                 return;
             }
         }
-        kvHashObj.setNext(objHash);
+        kvHashObjArrayCore.setNext(objHash);
     }
 }
